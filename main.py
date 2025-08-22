@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from datetime import datetime
-
+from pm25 import get_open_data
 
 books = {
     1: {
@@ -22,6 +22,14 @@ books = {
 
 
 app = Flask(__name__)
+
+
+@app.route("/pm25")
+def get_pm25():
+
+    values = get_open_data()
+    print(values)
+    return render_template("pm25.html")
 
 
 @app.route("/bmi/height=<h>&weight=<w>")
