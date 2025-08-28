@@ -67,6 +67,18 @@ def get_open_data():
     return values
 
 
+def write_data_to_mysql():
+    try:
+        open_db()
+        size = write_to_sql()
+        return {"result": "success", "size": size}
+    except Exception as e:
+        print(e)
+    finally:
+        close_db()
+    return {"result": "failure", "size": size}
+
+
 def write_to_sql():
     try:
         values = get_open_data()
@@ -77,8 +89,10 @@ def write_to_sql():
         size = cursor.executemany(sqlstr, values)
         conn.commit()
         print(f"寫入{size}筆資料成功!")
+        return size
     except Exception as e:
         print(e)
+    return 0
 
 
 def get_data_from_mysql():
