@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
     <style>
         body {
             text-align: center;
@@ -39,16 +40,16 @@
             text-align: center;
         }
 
-        .button {
+        button {
             width: 100px;
-            padding: 6px 6px;
+            padding: 10px 15px;
             background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
         }
 
-        .button:hover {
+        button:hover {
             background-color: #218838;
         }
 
@@ -75,7 +76,7 @@
         }
 
         #tableContainer {
-            max-height: 400px;
+            max-height: 600px;
             overflow-y: auto;
             border: 1px solid black;
             width: 60%;
@@ -100,48 +101,27 @@
 </head>
 
 <body>
-    <h1>PM2.5數值</h1>
-    <form action="/pm25" width="400" style="margin: 24px auto; text-align: center;" method="POST">
-        county :
-        <input type="text" name="county">
-        <button class="button" type="submit">搜尋</button>
-        <a class="button" href="/pm25">恢復</a>
-
-
-    </form>
-    <div id="result">
-
-    </div>
-
-
+    <h1>PM2.5數據列表</h1>
     <div id="tableContainer">
-
         <table border="1">
             <thead>
                 <tr>
-                    {% for col in content["columns"] %}
+                    {% for col in columns %}
                     <th>{{col}}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for row in content["values"] %}
+                {% for value in values %}
                 <tr>
-                    {% for data in row %}
+                    {% for data in value %}
                     <td>{{data}}</td>
                     {% endfor %}
-
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <script>
-        function reload() {
-            window.d
-        }
-    </script>
 </body>
 
 </html>
