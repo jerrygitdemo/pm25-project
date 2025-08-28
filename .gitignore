@@ -1,4 +1,7 @@
 .venv/
+<<<<<<< HEAD
 .vscode/
 __pycache__/
+=======
+>>>>>>> database
 .env

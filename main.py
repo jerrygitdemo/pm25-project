@@ -1,68 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from datetime import datetime
-from pm25 import get_open_data
-import json
-
-app = Flask(__name__)
-
-
-from flask import Response
-
-
-@app.route("/pm25", methods=["GET", "POST"])
-def get_pm25():
-    values = get_open_data(newest=True)
-
-    if request.method == "POST":
-        county = request.form.get("county")
-        print(county)
-        values = [value for value in values if value[1] == county]
-
-    content = {
-        "columns": ["site", "county", "pm25", "updatetime", "unit"],
-        "values": values,
-    }
-
-    return render_template("pm25.html", content=content)
-    # return Response(
-    #     json.dumps(content, ensure_ascii=False),
-    #     mimetype="application/json; charset=utf-8",
-    # )
-
-
-# 首頁
-@app.route("/")
-def index():
-    now_time = time()
-    return render_template("index.html", now_time=now_time)
-
-
-@app.route("/time/")
-def time():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-@app.route("/books/")
-@app.route("/books/<int:id>")
-def get_books(id=None):
-    try:
-        if id == None:
-            return render_template("books.html", books=books)
-        return books[id]
-    except Exception as e:
-        print(e)
-        return f"編號錯誤:{e}"
-
-
-# http://127.0.0.1:5000/bmi/height=176&weight=68
-@app.route("/bmi/height=<height>&weight=<weight>")
-def bmi(height, weight):
-    try:
-        bmi = round(eval(weight) / (eval(height) / 100) ** 2, 2)
-        return f"身高:{height} 體重:{weight} <br> BMI={bmi}"
-    except Exception as e:
-        return f"參數錯誤:{e}"
-
+from pm25 import get_data_from_mysql
 
 books = {
     1: {
@@ -82,5 +20,48 @@ books = {
     },
 }
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+app = Flask(__name__)
+
+
+@app.route("/pm25")
+def get_pm25():
+    values = get_data_from_mysql()
+    print(values)
+    columns = ["站點名稱", "縣市", "PM2.5", "更新時間", "單位"]
+    return render_template("pm25.html", columns=columns, values=values)
+
+
+@app.route("/bmi/height=<h>&weight=<w>")
+def get_bmi(h, w):
+    bmi = round(eval(w) / (eval(h) / 100) ** 2, 2)
+
+    return f"<h1>身高:{h}cm 體重:{w}kg<br> BMI:{bmi}</h1>"
+
+
+@app.route("/books")
+@app.route("/books/id=<int:id>")
+def get_books(id=None):
+    try:
+        if id == None:
+            return render_template("books.html", books=books)
+
+        return books[id]
+    except Exception as e:
+        return f"書籍編號錯誤:{e}"
+
+
+@app.route("/nowtime")
+def now_time():
+    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # print(time)
+    return time
+
+
+@app.route("/")
+def index():
+    time = now_time()
+    return render_template("index.html", x=time, name="jerry")
+
+
+app.run(debug=True)

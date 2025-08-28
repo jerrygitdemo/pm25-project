@@ -1,5 +1,5 @@
 import pymysql
-import requests
+import requests, os
 
 table_str = """
 create table if not exists pm25(
@@ -21,16 +21,34 @@ url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=540e2ca4-41e1-4186-8497
 conn, cursor = None, None
 
 
+from dotenv import load_dotenv
+
+# 載入 .env
+load_dotenv()
+
+# 讀取環境變數
+host = os.getenv("MYSQL_HOST")
+user = os.getenv("MYSQL_USER")
+password = os.getenv("MYSQL_PASSWORD")
+port = int(os.getenv("MYSQL_PORT"))
+database = os.getenv("MYSQL_DB")
+
+
 def open_db():
     global conn, cursor
-
     try:
         conn = pymysql.connect(
-            host="127.0.0.1", user="root", password="", port=3307, database="demo"
+            host=host,
+            user=user,
+            password=password,
+            port=port,
+            database=database,
         )
 
         # print(conn)
         cursor = conn.cursor()
+        cursor.execute(table_str)
+        conn.commit()
         print("資料庫開啟成功!")
     except Exception as e:
         print(e)
@@ -42,14 +60,10 @@ def close_db():
         print("資料庫關閉成功!")
 
 
-def get_open_data(newest=False):
+def get_open_data():
     resp = requests.get(url, verify=False)
     datas = resp.json()["records"]
-
     values = [list(data.values()) for data in datas if list(data.values())[2] != ""]
-    if newest:
-        max_updatetime = max([value[3] for value in values])
-        values = [value for value in values if value[3] == max_updatetime]
     return values
 
 
@@ -66,6 +80,28 @@ def write_to_sql():
     except Exception as e:
         print(e)
 
+
+def get_data_from_mysql():
+    try:
+        open_db()
+        sqlstr = (
+            "select site,county,pm25,datacreationdate,itemunit "
+            "from pm25 "
+            "where datacreationdate=(select max(datacreationdate) from pm25);"
+        )
+        cursor.execute(sqlstr)
+        datas = cursor.fetchall()
+
+        return datas
+    except Exception as e:
+        print(e)
+    finally:
+        close_db()
+
+    return None
+
+
+# print(get_data_from_mysql())
 
 # open_db()
 # write_to_sql()
