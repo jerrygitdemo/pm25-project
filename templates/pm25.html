@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: rgb(214, 255, 236);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            text-align: center;
+        }
+
+        .button {
+            width: 100px;
+            padding: 6px 6px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #218838;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 1px solid;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: center;
+        }
+
+        td {
+            background-color: rgb(255, 255, 255);
+        }
+
+        thead {
+            background-color: #f2f2f2;
+        }
+
+        #tableContainer {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid black;
+            width: 60%;
+            margin: 0 auto;
+
+        }
+
+        @media screen and (max-width: 1024px) {
+            #tableContainer {
+                width: 80%;
+            }
+
+        }
+
+        @media screen and (max-width: 600px) {
+            #tableContainer {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>PM2.5數值</h1>
+    <form action="/pm25" width="400" style="margin: 24px auto; text-align: center;" method="POST">
+        county :
+        <input type="text" name="county">
+        <button class="button" type="submit">搜尋</button>
+        <a class="button" href="/pm25">恢復</a>
+
+
+    </form>
+    <div id="result">
+
+    </div>
+
+
+    <div id="tableContainer">
+
+        <table border="1">
+            <thead>
+                <tr>
+                    {% for col in content["columns"] %}
+                    <th>{{col}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in content["values"] %}
+                <tr>
+                    {% for data in row %}
+                    <td>{{data}}</td>
+                    {% endfor %}
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function reload() {
+            window.d
+        }
+    </script>
+</body>
+
+</html>

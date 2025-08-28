@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        .price {
+            display: block;
+            font-size: 24px;
+            background: black;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% for id in books %}
+
+    <h1>{{books[id]["name"]}} <br><span class="price">${{books[id].price}}</span></h1>
+
+
+    <img src="{{books[id].image_url}}" alt="">
+
+    <p><a href="https://www.books.com.tw">購買連結</a></p>
+    <hr>
+    {% endfor %}
+</body>
+
+</html>
