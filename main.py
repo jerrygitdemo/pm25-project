@@ -28,9 +28,18 @@ import json
 
 @app.route("/avg-pm25")
 def get_avg_pm25():
-    result = get_county_avg_pm25()
+    datas = get_county_avg_pm25()
     return Response(
-        json.dumps({"result": result}, ensure_ascii=False), mimetype="application/json"
+        json.dumps(
+            {
+                "title": "各縣市PM2.5平均值",
+                "date": None,
+                "county": [data[0] for data in datas],
+                "pm25": [data[1] for data in datas],
+            },
+            ensure_ascii=False,
+        ),
+        mimetype="application/json",
     )
 
 

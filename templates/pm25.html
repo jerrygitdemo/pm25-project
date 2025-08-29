@@ -97,11 +97,19 @@
             }
 
         }
+
+        #main {
+            margin: 0 auto;
+        }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 </head>
 
 <body>
     <h1>PM2.5數據列表</h1>
+    <div id="main" style="width: 1024px;height:400px;"></div>
     <a href="/update-db">更新資料庫</a>
     <div id="tableContainer">
         <table border="1">
@@ -123,6 +131,57 @@
             </tbody>
         </table>
     </div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+
+        myChart.showLoading();
+        $.ajax
+            (
+                {
+                    url: "/avg-pm25",
+                    type: "GET",
+                    dataType: "json",
+                    error: (err) => {
+                        myChart.hideLoading();
+                        alert("讀取失敗...");
+                    },
+                    success: (result) => {
+                        myChart.hideLoading();
+                        console.log(result);
+                        // 指定图表的配置项和数据
+                        var option = {
+                            title: {
+                                text: result["title"]
+                            },
+                            tooltip: {},
+                            legend: {
+                                data: ["pm25"]
+                            },
+                            xAxis: {
+                                data: result["county"]
+                            },
+                            yAxis: {},
+                            series: [
+
+                                {
+                                    itemStyle: {
+                                        color: 'red'
+                                    },
+                                    name: 'pm2.5',
+                                    type: 'bar',
+                                    data: result["pm25"]
+                                }
+                            ]
+                        };
+
+                        myChart.setOption(option);
+                    }
+                }
+            )
+
+    </script>
 </body>
 
 </html>
