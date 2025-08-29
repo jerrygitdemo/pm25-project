@@ -86,6 +86,24 @@ def write_data_to_mysql():
         close_db()
 
 
+def get_avg_pm25_from_mysql():
+    try:
+        open_db()
+        sqlstr = """
+        select county,round(avg(pm25),2)  from pm25 group by county;
+        """
+        cursor.execute(sqlstr)
+        datas = cursor.fetchall()
+
+        return datas
+    except Exception as e:
+        print(e)
+    finally:
+        close_db()
+
+    return None
+
+
 def get_data_from_mysql():
     try:
         open_db()
@@ -108,3 +126,4 @@ def get_data_from_mysql():
 
 if __name__ == "__main__":
     write_data_to_mysql()
+    print(get_avg_pm25_from_mysql())
