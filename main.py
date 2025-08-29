@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
 from datetime import datetime
-from pm25 import get_data_from_mysql, write_data_to_mysql
+from pm25 import get_data_from_mysql, write_data_to_mysql, get_county_avg_pm25
 
 books = {
     1: {
@@ -22,6 +22,16 @@ books = {
 
 
 app = Flask(__name__)
+
+import json
+
+
+@app.route("/avg-pm25")
+def get_avg_pm25():
+    result = get_county_avg_pm25()
+    return Response(
+        json.dumps({"result": result}, ensure_ascii=False), mimetype="application/json"
+    )
 
 
 @app.route("/update-db")
