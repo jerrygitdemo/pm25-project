@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
+    <link rel="stylesheet" href="style/base.css">
     <style>
         body {
             text-align: center;
@@ -98,7 +98,8 @@
 
         }
 
-        #main {
+        #main,
+        #county {
             margin: 0 auto;
         }
     </style>
@@ -111,10 +112,18 @@
     <h1>PM2.5數據列表</h1>
     <a href="/update-db">更新資料庫</a>
 
-    <div id="main" style="width: 800px;height:600px;"></div>
+    <div id="main" style="width: 800px;height:400px;"></div>
+    <div id="county" style="width: 800px;height:400px;" hidden></div>
 
-
-
+    <div style="margin: 6px;">
+        <label for="countySelect">選擇縣市</label>
+        <select name="countySelect" id="countySelect">
+            <option value="新北市">新北市</option>
+            <option value="臺北市">臺北市</option>
+            <option value="桃園市">桃園市</option>
+        </select>
+        <button id="loadCounty" onclick="drawCountyChart()">確定</button>
+    </div>
     <div id="tableContainer">
         <table border="1">
             <thead>
@@ -137,44 +146,62 @@
     </div>
 
 
-
-
     <script type="text/javascript">
-        var myChart = echarts.init(document.getElementById('main'));
+        const chart1 = echarts.init(document.getElementById('main'));
+
+        const chart2 = echarts.init(document.getElementById('county'));
+        const countyEl = document.getElementById('county');
+        const countySelectEl = document.querySelector("#countySelect");
+
+        drawChart(chart1, "/avg-pm25", "各縣市PM2.5平均值", "county", "pm25")
 
 
-        $.ajax(
-            {
-                url: "/avg-pm25",
-                type: "GET",
-                dataType: "json",
-                success: (result) => {
-                    console.log(result);
-                    var option = {
-                        title: {
-                            text: '縣市PM2.5平均值'
-                        },
-                        tooltip: {},
-                        legend: {
-                            data: ['PM2.5']
-                        },
-                        xAxis: {
-                            data: result["county"]
-                        },
-                        yAxis: {},
-                        series: [
-                            {
-                                name: 'PM2.5',
-                                type: 'bar',
-                                data: result["pm25"]
-                            }
-                        ]
-                    };
+        function drawCountyChart() {
+            let county = countySelectEl.value;
+            countyEl.hidden = false;
+            console.log(county);
+            drawChart(chart2, `/county-pm25/${county}`, `${county}PM2.5數據圖`, "site", "pm25", "orange");
+        }
 
-                    myChart.setOption(option);
-                },
-            }
-        );
+
+
+        function drawChart(chart, url, title, xKey, yKey, color = "#b0c4de") {
+            $.ajax(
+                {
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: (result) => {
+                        console.log(result);
+                        var option = {
+                            title: {
+                                text: title
+                            },
+                            tooltip: {},
+                            legend: {
+                                data: ['PM2.5']
+                            },
+                            xAxis: {
+                                data: result[xKey]
+                            },
+                            yAxis: {},
+                            series: [
+                                {
+                                    itemStyle: {
+                                        color: color
+                                    },
+                                    name: 'PM2.5',
+                                    type: 'bar',
+                                    data: result[yKey]
+                                }
+                            ]
+                        };
+
+                        chart.setOption(option);
+                    },
+                }
+            );
+        }
 
 
     </script>

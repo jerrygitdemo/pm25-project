@@ -148,4 +148,5 @@ def get_pm25_by_county(county):
 if __name__ == "__main__":
     # write_data_to_mysql()
     # print(get_avg_pm25_from_mysql())
+    print(get_data_from_mysql())
     print(get_pm25_by_county("臺中市"))
