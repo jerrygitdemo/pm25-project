@@ -124,6 +124,28 @@ def get_data_from_mysql():
     return None
 
 
+def get_pm25_by_county(county):
+    try:
+        open_db()
+        sqlstr = """
+        select site,pm25,datacreationdate from pm25
+        where county=%s 
+        and datacreationdate=(select max(datacreationdate) from pm25);
+        """
+
+        cursor.execute(sqlstr, (county,))
+        datas = cursor.fetchall()
+
+        return datas
+    except Exception as e:
+        print(e)
+    finally:
+        close_db()
+
+    return None
+
+
 if __name__ == "__main__":
-    write_data_to_mysql()
-    print(get_avg_pm25_from_mysql())
+    # write_data_to_mysql()
+    # print(get_avg_pm25_from_mysql())
+    print(get_pm25_by_county("臺中市"))
